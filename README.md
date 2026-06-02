@@ -20,13 +20,13 @@ This repo contains the code to standup a prototype bumble bee camera trap for re
 
 
 ## Raspberry Pi setup and configuration
-### Physical setup
+### 1. Physical setup
 1. Solder (or use hammer-header) GPIO pin header to the Pi.
 2. Attach stacking header and then Witty Pi 4 mini on top of that
 3. Mount the USB hub, ensuring the Pogo pins are correctly aligned (see [here](https://makerspot.com/stackable-usb-hub-for-raspberry-pi-zero/) for instructions.
 4. Plug in the USB thumb drive to any of the USB ports on the hub.
 
-### Operating system
+### 2. Operating system
 Use the Raspberry Pi Imager software to install the recommended operating system for the Raspberry Pi Zero 2W on the microSD card (but opt for the 32-bit version for this particular iteration of the camera trap to save on memory use.
 
 For customizations, you will need to define:
@@ -38,10 +38,10 @@ For customizations, you will need to define:
 5. Enable SSH using password authentication
 6. Enable Raspberry Pi Connect (remote access capabilities). You will need to open and signin to our lab's Raspberry Pi connect account in order to obtain the authentication token.
 
-### Witty Pi 4 mini installation & configuration
+### 3. Witty Pi 4 mini installation & configuration
 
-### External hard drive configuration (USB thumb-drive)
+### 4. External hard drive configuration (USB thumb-drive)
 
-### DHT22 configuration
+### 5. DHT22 configuration
 
 

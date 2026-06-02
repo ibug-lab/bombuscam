@@ -1,6 +1,6 @@
 # Bombuscam
 
-
+![](sticker.png)
 
 ## Autonomous bumble bee camera trap for research and conservation
 

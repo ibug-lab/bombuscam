@@ -13,7 +13,7 @@ This repo contains the code to standup a prototype bumble bee camera trap for re
 | :---- | :---- | :---- |
 | **1\.** Raspberry Pi Zero 2W | Microcontroller that manages camera imaging and environmental sensors | n/a |
 | **2\.** MakerSpot USB hub | Multi-port USB hub for thumb drive and camera interface | n/a |
-| **3\.** WittyPi 4 Mini RTC | Real-time clock that controls scheduled startup and shutdown | [Link to documentation]([https://www.uctronics.com/download/Amazon/B029201_Maunal.pdf%20](https://www.uugear.com/doc/WittyPi4Mini_UserManual.pdf)) |
+| **3\.** WittyPi 4 Mini RTC | Real-time clock that controls scheduled startup and shutdown | [Link to documentation]([https://www.uctronics.com/download/Amazon/B029201_Maunal.pdf%20](https://www.uugear.com/doc/WittyPi4Mini_UserManual.pdf) |
 | **4\.** USB thumb drive | External drive for image storage | n/a |
 | **5\.** Arducam IMX219 camera |  | [Link to documentation](https://www.uctronics.com/download/Amazon/B029201_Maunal.pdf%20)  |
 | **6\.** DHT22 temp/humid sensor |  | n/a |

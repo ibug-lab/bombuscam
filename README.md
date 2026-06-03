@@ -1,5 +1,5 @@
 <div align="center">
-<img src="sticker.png" style="width: 400px; height: auto;">
+<img src="media/sticker.png" style="width: 400px; height: auto;">
 </div>
 
 # Autonomous bumble bee camera trap for research and conservation
@@ -84,15 +84,25 @@ sudo home/bombus/uwi/diagnose.sh
 This will configure the web interface and provide the URL to access the Witty Pi device and enter the scheduling information. Once you have accessed the Witty Pi UI, select "Schedule Script" and paste in:
 
 ```
-# Turn on Raspberry Pi for 5 minutes, in every 20 minutes
-BEGIN 2026-08-01 06:00:00
-END 2030-12-31 23:59:59
-ON H14 # keep ON state for 14 hours
-OFF H10 # keep OFF state for 10 hours
+# Define start and end to schedule
+BEGIN 2026-06-01 06:00:00
+END   2035-12-31 20:00:00
+
+ON  H14 # On for 14 hours
+OFF H10 # Off for 10 hours
+
 ```
+
+Click save, and then refresh the UI. You should now see the `Next Shutdown` and `Next Startup` with a time of 20:00 of the current day (for Next Shutdown) and 06:00 for the next day (for Next Startup). 
+
+Next, set the low voltage setting to 3V. This ensures that the Pi gracefully shuts down if/when the battery is drained and voltage begins to drop. 
 
 ## 4. External hard drive configuration (USB thumb-drive)
 
-## 5. DHT22 configuration
+The USB thumb drive we use contains 500gb of space where we will store all of our captured images. We'll first reformat/re-partition the drive and then modify a script to ensure the drive automounts each time the Pi boots up in the morning. 
 
+
+
+## 5. DHT22 configuration
+The DHT22 is a temperature/humidity sensor to record environmental conditions at the trap. To configure it, first ensure that the sensor is correctly installed on the GPIO pins of the Pi (see diagram below). 
 

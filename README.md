@@ -24,9 +24,12 @@ This repo contains the code to standup a prototype bumble bee camera trap for re
 
 
 ## Raspberry Pi setup and configuration
-<div align="left">
-<img src="camera-trap.png" style="width: 400px; height: auto;">
-</div>
+Prototype trap deployed | Trap imaging surface
+:-------------------------:|:-------------------------:
+<img src="media/camera-trap1.jpg" height="500"> |  <img src="media/camera-trap2.jpeg" height="500">
+
+
+<img src="https://github.com/favicon.ico" width="48">
 
 ### 1. Physical setup
 1. Solder (or use hammer-header) GPIO pin header to the Pi.

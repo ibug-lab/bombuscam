@@ -106,6 +106,38 @@ The USB thumb drive we use contains 500gb of space where we will store all of ou
 ## 5. DHT22 configuration
 The DHT22 is a temperature/humidity sensor to record environmental conditions at the trap. To configure it, first ensure that the sensor is correctly installed on the GPIO pins of the Pi (see diagram below). 
 
-<div align="left">
-<img src="media/pi-dht-pinout.png" style="width: 400px; height: auto;">
+<div align="center">
+<img src="media/pi-dht.png" style="width: 400px; height: auto;">
 </div>
+
+Next, open a terminal and install the necessary dependencies and initialize a python virtual environment to run the `dht22.py` script. 
+
+```bash
+sudo apt install -y \
+python3-venv \
+python3-dev \
+build-essential \
+swig \
+liblgpio-dev
+
+python3 -m venv /home/bombus/dht-env
+source /home/bombus/dht-env/bin/activate
+
+pip install lgpio
+pip install adafruit-blinka
+pip install adafruit-circuitpython-dht
+python home/bombus/bombuscam/dht22.py # this starts the script
+```
+
+## 6. Setup CRONTAB events for all camera trap scripts
+Using the Witty Pi will start up and shutdown the Pi automatically to save on battery overnight. Because of this, we'll need to configure our Pi to automatically start our camera trap and temperature/humidity sensor script automatically each time the Pi boots up in the morning. For this, we'll use crontab, which is a job scheduler.
+
+```
+crontab -e
+
+# add this line to start the scripts after reboot with a 60 second delay
+@reboot sleep 60 && /home/bombus/dht-env/venv/bin/python /home/bombus/bombuscam/dht22.py
+@reboot sleep 60 && /usr/bin/python3 /home/bombus/bombuscam/camera-trap.py
+```
+
+Save and exit the crontab. Our scripts are successfully scheduled to startup as soon as the Pi boots up in the morning (+ a 1 minute delay to ensure the device unit boots).  

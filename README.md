@@ -27,13 +27,13 @@ Prototype trap deployed | Trap imaging surface
 :-------------------------:|:-------------------------:
 <img src="media/camera-trap1.jpg" height="500"> |  <img src="media/camera-trap2.jpeg" height="500">
 
-## 1. Physical setup
+## 1. Physical setup 🏗️
 1. Solder (or use hammer-header) GPIO pin header to the Pi.
 2. Attach stacking header and then Witty Pi 4 mini on top of that
 3. Mount the USB hub, ensuring the Pogo pins are correctly aligned (see [here](https://makerspot.com/stackable-usb-hub-for-raspberry-pi-zero/) for instructions.
 4. Plug in the USB thumb drive to any of the USB ports on the hub.
 
-## 2. Operating system and software
+## 2. Operating system and software 💿
 ### Imaging MicroSD card
 Use the Raspberry Pi Imager software to install the recommended operating system for the Raspberry Pi Zero 2W on the microSD card (but opt for the *32-bit* version for this particular iteration of the camera trap to save memory.
 
@@ -68,7 +68,7 @@ python3-opencv
 pip3 install imutils
 ```
 
-## 3. Witty Pi 4 mini configuration
+## 3. Witty Pi 4 mini configuration 🔋
 
 ```bash
 wget https://www.uugear.com/repo/WittyPi4/install.sh
@@ -97,13 +97,13 @@ Click save, and then refresh the UI. You should now see the `Next Shutdown` and 
 
 Next, set the low voltage setting to 3V. This ensures that the Pi gracefully shuts down if/when the battery is drained and voltage begins to drop. 
 
-## 4. External hard drive configuration (USB thumb-drive)
+## 4. External hard drive configuration (USB thumb-drive) 💽
 
 The USB thumb drive we use contains 500gb of space where we will store all of our captured images. We'll first reformat/re-partition the drive and then modify a script to ensure the drive automounts each time the Pi boots up in the morning. 
 
 
 
-## 5. DHT22 configuration
+## 5. DHT22 configuration 🌡️
 The DHT22 is a temperature/humidity sensor to record environmental conditions at the trap. To configure it, first ensure that the sensor is correctly installed on the GPIO pins of the Pi (see diagram below). 
 
 <div align="center">
@@ -129,7 +129,7 @@ pip install adafruit-circuitpython-dht
 python home/bombus/bombuscam/dht22.py # this starts the script
 ```
 
-## 6. Setup CRONTAB events for all camera trap scripts
+## 6. Setup CRONTAB events for all camera trap scripts 📅
 Using the Witty Pi will start up and shutdown the Pi automatically to save on battery overnight. Because of this, we'll need to configure our Pi to automatically start our camera trap and temperature/humidity sensor script automatically each time the Pi boots up in the morning. For this, we'll use crontab, which is a job scheduler.
 
 ```

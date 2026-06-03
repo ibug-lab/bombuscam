@@ -106,3 +106,6 @@ The USB thumb drive we use contains 500gb of space where we will store all of ou
 ## 5. DHT22 configuration
 The DHT22 is a temperature/humidity sensor to record environmental conditions at the trap. To configure it, first ensure that the sensor is correctly installed on the GPIO pins of the Pi (see diagram below). 
 
+<div align="left">
+<img src="media/pi-dht-pinout.png" style="width: 400px; height: auto;">
+</div>

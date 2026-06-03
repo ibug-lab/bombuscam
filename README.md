@@ -28,16 +28,14 @@ Prototype trap deployed | Trap imaging surface
 :-------------------------:|:-------------------------:
 <img src="media/camera-trap1.jpg" height="500"> |  <img src="media/camera-trap2.jpeg" height="500">
 
-
-<img src="https://github.com/favicon.ico" width="48">
-
 ### 1. Physical setup
 1. Solder (or use hammer-header) GPIO pin header to the Pi.
 2. Attach stacking header and then Witty Pi 4 mini on top of that
 3. Mount the USB hub, ensuring the Pogo pins are correctly aligned (see [here](https://makerspot.com/stackable-usb-hub-for-raspberry-pi-zero/) for instructions.
 4. Plug in the USB thumb drive to any of the USB ports on the hub.
 
-### 2. Operating system
+### 2. Operating system and software
+#### Imaging MicroSD card
 Use the Raspberry Pi Imager software to install the recommended operating system for the Raspberry Pi Zero 2W on the microSD card (but opt for the *32-bit* version for this particular iteration of the camera trap to save memory.
 
 For customizations, you will need to define:
@@ -47,18 +45,19 @@ For customizations, you will need to define:
 3. Password: use standard lab password for devices (see asset tracking spreadsheet)
 4. WiFi network: use either personal hotspot or local network that you have full access to (we can later swap to Eduroam or other networks). If neither hotspot or local network is available, leave blank for now and manually configure using keyboard/mouse/monitor after completing the rest of this guide.
 5. Enable SSH using password authentication (this is to enable remote access using the device password above)
-6. Enable Raspberry Pi Connect (additional remote access capabilities including screen sharing). You will need to open and sign in to our lab's Raspberry Pi connect account in order to obtain the authentication token. Account details are in the pi asset spreadsheet.
+6. Enable Raspberry Pi Connect (additional remote access capabilities including screen sharing). You will need to open and sign in to our lab's Raspberry Pi connect account in order to obtain the authentication token. Account details are in the iBUG Pi asset spreadsheet.
 
+#### Updates and dependency installation
 Once the microSD card is flashed with the OS, install it in the Pi and boot it up. If the Pi is autoconnecting to available hotspot or wifi, login to Raspberry Pi Connect and then login to the device using a remote shell connection (i.e., terminal window). If the device is not on the network, use a keyboard/mouse and monitor to open a terminal window and execute the following:
 
-```{shell}
+```bash
 sudo apt update
 sudo apt upgrade
 ```
+Accept upgrade installations and wait for the device to update fully. This may take 5-15 minutes. Once complete, `sudo reboot` to reboot the Pi. Once the Pi has rebooted, open a terminal and then install the requisite programs/packages needed:
 
-Once the Pi has rebooted, open a terminal and then install the requisite programs/packages needed:
-
-```
+```bash
+# GUI for managing disk devices/partitions
 sudo apt-get install gparted
 
 sudo apt install -y \
@@ -70,9 +69,28 @@ python3-opencv
 pip3 install imutils
 ```
 
-Accept upgrade installations and wait for the device to update fully. This may take 5-15 minutes. Once complete, `sudo reboot` to reboot the Pi. 
-
 ### 3. Witty Pi 4 mini configuration
+
+```bash
+wget https://www.uugear.com/repo/WittyPi4/install.sh
+sudo sh install.sh
+```
+
+After the installation, we'll setup the web interface to adjust the schedule for startup/shutdown. 
+
+```bash
+sudo home/bombus/uwi/diagnose.sh
+```
+
+This will configure the web interface and provide the URL to access the Witty Pi device and enter the scheduling information. Once you have accessed the Witty Pi UI, select "Schedule Script" and paste in:
+
+```
+# Turn on Raspberry Pi for 5 minutes, in every 20 minutes
+BEGIN 2026-08-01 06:00:00
+END 2030-12-31 23:59:59
+ON H14 # keep ON state for 14 hours
+OFF H10 # keep OFF state for 10 hours
+```
 
 ### 4. External hard drive configuration (USB thumb-drive)
 

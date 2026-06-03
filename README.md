@@ -5,7 +5,7 @@
 # Bombuscam
 ## Autonomous bumble bee camera trap for research and conservation
 
-This repo contains the code to standup a prototype bumble bee camera trap for remote, field-based surveys of bumble bee biodiversity and other related research. The build instructions for the trap are included below, along with the software configuration and installation guidelines. The design for this trap is inspired by [Getz et al.](www.biorxiv.org/content/10.64898/2025.12.09.692866v1.full.pdf) with modifications from some of our own prototypes and designs over the last two years. 
+This repo contains the code to standup a prototype bumble bee camera trap for remote, field-based surveys of bumble bee biodiversity and other related research. The build instructions for the trap are included below, along with the software configuration and installation guidelines. The design for this trap is inspired by [Getz et al.](https://www.biorxiv.org/content/10.64898/2025.12.09.692866v1) with modifications from some of our own prototypes and designs over the last two years. 
 
 [![bioRxiv](https://img.shields.io/badge/bioRxiv-10.64898%2F2025.12.09.692866-blue)](https://doi.org/10.64898/2025.12.09.692866)
 

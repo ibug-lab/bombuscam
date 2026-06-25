@@ -72,13 +72,13 @@ python3-opencv
 ```
 
 ## 4. Clone Github repository to the Pi
-Now we'll clone this repo to the Pi so that we have the requisite scripts to test and run both the DHT22 sensor (`dht22.py`) and camera trap script (`pollincam.py`).
+Now we'll clone this repo to the Pi so that we have the requisite scripts to test and run both the DHT22 sensor (`dht22.py`) and camera trap script (`camera-trap.py`).
 
 ```bash
 git clone https://github.com/ibug-lab/bombuscam.git
 ```
 
-Once cloned, we'll need to adjust the file paths in both the `dht22.py` and `camera-trap2.py` scripts. Open then using `nano` (e.g., `nano /home/ibuglab/pollin-cam/dht22.py`) and adjust the file paths to the directory we just created above, should be something like: `/home/ibuglab/pollincam-01"
+Once cloned, we'll need to adjust the file paths in both the `dht22.py` and `camera-trap.py` scripts. Open then using `nano` (e.g., `nano /home/ibuglab/bombuscam/dht22.py`) and adjust the file paths to the directory we just created above, should be something like: `/home/ibuglab/bombuscam-01`
 
 This will create a directory (folder) inside our home folder called `bombuscam` where our scripts will be housed. 
 
@@ -133,9 +133,9 @@ This will open an interactive terminal menu that you can navigate. Start by Sync
 
 ## 6. External hard drive configuration (USB thumb-drive) 💽
 ### Using Gparted
-Launch screen sharing to the device via Raspberry Pi Connect. Under the Pi menu, go to System Tools and launch "GParted". From here, select the external drive from the dropdown in the upper right, and then select the partition. Go to partition --> unmount and then partition --> delete partition. Then, partition --> create partitition. Keep all the default settings and only enter the label, which should be the device name (e.g., `pollincam-01`). Once you're done with that, go to edit --> apply all operations. This will take a few minutes to create the new partition table on the device. 
+Launch screen sharing to the device via Raspberry Pi Connect. Under the Pi menu, go to System Tools and launch "GParted". From here, select the external drive from the dropdown in the upper right, and then select the partition. Go to partition --> unmount and then partition --> delete partition. Then, partition --> create partitition. Keep all the default settings and only enter the label, which should be the device name (e.g., `bombuscam-01`). Once you're done with that, go to edit --> apply all operations. This will take a few minutes to create the new partition table on the device. 
 
-Next, we'll create the mounting point for the hard drive. Adjust the directory name below to match the device name (e.g., `pollincam-04`)
+Next, we'll create the mounting point for the hard drive. Adjust the directory name below to match the device name (e.g., `bombuscam-04`)
 
 ```bash
 mkdir bombuscam-XX
@@ -217,7 +217,7 @@ crontab -e
 
 # add this line to start the scripts after reboot with a 60 second delay
 @reboot sleep 60 && /home/ibuglab/dht-env/bin/python /home/ibuglab/bombuscam/dht22.py >> /home/ibuglab/bombuscam-xx/dht22.log 2>&1
-@reboot sleep 60 && /usr/bin/python3 /home/ibuglab/bombuscam/pollincam.py
+@reboot sleep 60 && /usr/bin/python3 /home/ibuglab/bombuscam/camera-trap.py
 ```
 
 Save and exit the crontab. Our scripts are successfully scheduled to startup as soon as the Pi boots up in the morning (+ a 1 minute delay to ensure the device unit boots). 

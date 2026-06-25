@@ -27,27 +27,30 @@ Prototype trap deployed | Trap imaging surface
 :-------------------------:|:-------------------------:
 <img src="media/camera-trap1.jpg" height="500"> |  <img src="media/camera-trap2.jpeg" height="500">
 
+
+
 ## 1. Physical setup 🏗️
 1. Solder (or use hammer-header) GPIO pin header to the Pi.
 2. Attach stacking header and then Witty Pi 4 mini on top of that
 3. Mount the USB hub, ensuring the Pogo pins are correctly aligned (see [here](https://makerspot.com/stackable-usb-hub-for-raspberry-pi-zero/) for instructions.
 4. Plug in the USB thumb drive to any of the USB ports on the hub.
 
-## 2. Operating system and software 💿
+## 2. Operating system
 ### Imaging MicroSD card
-Use the Raspberry Pi Imager software to install the recommended operating system for the Raspberry Pi Zero 2W on the microSD card (but opt for the *32-bit* version for this particular iteration of the camera trap to save memory.
+Use the Raspberry Pi Imager software to install the recommended operating system for the Raspberry Pi Zero 2W on the microSD card, but opt for the *32-bit* version of Debian Trixie for this particular iteration of the camera trap to save memory.
 
 For customizations, you will need to define:
 
-1. Hostname: use `bombuscam-XX` Replace the `XX` with the next sequence of defined in the lab pi asset tracking spreadsheet.
-2. Username: use `bombus`
+1. Hostname: use `bombuscam-XX` Replace the `XX` with the next sequence of defined in the lab [pi asset tracking spreadsheet](https://docs.google.com/spreadsheets/d/1pnYCtPfJXKfBuZh21JEj92YoKfLTsGIIcNOYOkOsOY0/edit?usp=sharing).
+2. Username: use `ibuglab`
 3. Password: use standard lab password for devices (see asset tracking spreadsheet)
 4. WiFi network: use either personal hotspot or local network that you have full access to (we can later swap to Eduroam or other networks). If neither hotspot or local network is available, leave blank for now and manually configure using keyboard/mouse/monitor after completing the rest of this guide.
 5. Enable SSH using password authentication (this is to enable remote access using the device password above)
 6. Enable Raspberry Pi Connect (additional remote access capabilities including screen sharing). You will need to open and sign in to our lab's Raspberry Pi connect account in order to obtain the authentication token. Account details are in the iBUG Pi asset spreadsheet.
 
+##  3. Updates and software 💿
 ### Updates and dependency installation
-Once the microSD card is flashed with the OS, install it in the Pi and boot it up. If the Pi is autoconnecting to available hotspot or wifi, login to Raspberry Pi Connect and then login to the device using a remote shell connection (i.e., terminal window). If the device is not on the network, use a keyboard/mouse and monitor to open a terminal window and execute the following:
+Once the microSD card is flashed with the OS, install it in the Pi and boot it up. If the Pi is auto-connecting to available hotspot or wifi, login to Raspberry Pi Connect and then login to the device using a remote shell connection (i.e., terminal window). If the device is not on the network, use a keyboard/mouse and monitor to open a terminal window and execute the following:
 
 ```bash
 sudo apt update
@@ -57,39 +60,56 @@ Accept upgrade installations and wait for the device to update fully. This may t
 
 ```bash
 # GUI for managing disk devices/partitions
+# Install this first
 sudo apt-get install gparted
 
+# Then run this section of code
 sudo apt install -y \
 python3-flask \
 python3-numpy \
 v4l-utils \
 python3-opencv
-
-pip3 install imutils
 ```
 
-## 3. Witty Pi 4 mini configuration 🔋
+## 4. Clone Github repository to the Pi
+Now we'll clone this repo to the Pi so that we have the requisite scripts to test and run both the DHT22 sensor (`dht22.py`) and camera trap script (`pollincam.py`).
+
+```bash
+git clone https://github.com/ibug-lab/bombuscam.git
+```
+
+Once cloned, we'll need to adjust the file paths in both the `dht22.py` and `camera-trap2.py` scripts. Open then using `nano` (e.g., `nano /home/ibuglab/pollin-cam/dht22.py`) and adjust the file paths to the directory we just created above, should be something like: `/home/ibuglab/pollincam-01"
+
+This will create a directory (folder) inside our home folder called `bombuscam` where our scripts will be housed. 
+
+## 5. Witty Pi 4 mini configuration 🔋
 
 ```bash
 wget https://www.uugear.com/repo/WittyPi4/install.sh
 sudo sh install.sh
 ```
 
-After the installation, we'll setup the web interface to adjust the schedule for startup/shutdown. 
+After the installation, the installer will prompt you to reboot the pi. Do so, and then we'll setup the web interface to adjust the schedule for startup/shutdown. 
 
 ```bash
-sudo home/bombus/uwi/diagnose.sh
+sudo /home/ibuglab/uwi/diagnose.sh
 ```
 
-This will configure the web interface and provide the URL to access the Witty Pi device and enter the scheduling information. Once you have accessed the Witty Pi UI, select "Schedule Script" and paste in:
+This will configure the web interface and provide the URL to access the Witty Pi device and enter the scheduling information. When you first open the web UI, it will show an error that the witty pi software can't be found. This is because the configuration file has the incorrect username specified for our pi. To fix this, we'll open up that file, and replace "pi" in the file paths with "ibug". Run the following line, and then replace pi in the filepath with ibuglab in the 5 last lines of that configuration file. 
+
+```bash
+nano /home/ibuglab/uwi/uwi.conf
+```
+
+Return the to web interface and refresh. THe error should go away! Now that you have accessed the Witty Pi UI, select "Schedule Script" and paste in:
 
 ```
 # Define start and end to schedule
 BEGIN 2026-06-01 06:00:00
 END   2035-12-31 20:00:00
 
-ON  H14 # On for 14 hours
-OFF H10 # Off for 10 hours
+ON  H14
+OFF H10 
 
 ```
 
@@ -97,20 +117,70 @@ Click save, and then refresh the UI. You should now see the `Next Shutdown` and 
 
 Next, set the low voltage setting to 3V. This ensures that the Pi gracefully shuts down if/when the battery is drained and voltage begins to drop. 
 
-## 4. External hard drive configuration (USB thumb-drive) 💽
+If the web interface isn't working, you can edit the schedule and adjust the low voltage setting using the terminal. First, we'll move our schedule file from our Github repo folder to the schedules folder inside our WittyPi:
 
-The USB thumb drive we use contains 500gb of space where we will store all of our captured images. We'll first reformat/re-partition the drive and then modify a script to ensure the drive automounts each time the Pi boots up in the morning. 
+```bash
+mv /home/ibuglab/bombuscam/all_day_0600_2000.wpi /home/ibuglab/wittypi/schedules/
+```
 
+Next, open up the `wittyPi.sh` file:
 
+```bash
+nano /home/ibuglab/wittypi/wittyPi.sh
+```
 
-## 5. DHT22 configuration 🌡️
+This will open an interactive terminal menu that you can navigate. Start by Synchronizing with network time (option 3), and then select "5. Choose schedule script". This will bring up a list of schedule scripts, and you should see the `all_day_0600_2000.wpi` file that we moved in. Select that script. It should load it, and configure the next startup and shutdown date and time. Double check that the next shutdown is today at 20:00 (8pm), and the next startup is tomorrow at 06:00 (6am). Next, select  "6. Set low voltage threshold". Enter 3 as the low voltage and save. You cna then exit (option 13). The WittyPi is now configured!
+
+## 6. External hard drive configuration (USB thumb-drive) 💽
+### Using Gparted
+Launch screen sharing to the device via Raspberry Pi Connect. Under the Pi menu, go to System Tools and launch "GParted". From here, select the external drive from the dropdown in the upper right, and then select the partition. Go to partition --> unmount and then partition --> delete partition. Then, partition --> create partitition. Keep all the default settings and only enter the label, which should be the device name (e.g., `pollincam-01`). Once you're done with that, go to edit --> apply all operations. This will take a few minutes to create the new partition table on the device. 
+
+Next, we'll create the mounting point for the hard drive. Adjust the directory name below to match the device name (e.g., `pollincam-04`)
+
+```bash
+mkdir bombuscam-XX
+```
+
+We'll now add the hard drive to the file system table (fstab). Run the following code, and copy the UUID for the hard drive we just partitioned.
+
+```bash
+sudo lsblk -o UUID,NAME,FSTYPE,SIZE,MOUNTPOINT,LABEL,MODEL
+```
+
+Next, open the fstab file and add the hard drive... 
+
+```bash
+sudo nano /etc/fstab
+```
+At the end of this file, add 
+
+```bash
+UUID=xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx /home/ibuglab/bombuscam-XX ext4 defaults,auto,users,rw,nofail 0 0
+```
+replacing both the UUID with the one you just copied, and adjusting the file path to the directory we just created (i.e., replace `bombuscam-xx` with the correct name, e.g., `bombuscam-04`)
+
+Next, we'll mount the drive:
+
+```bash
+sudo mount -a
+```
+
+And finally, update the folder permissions so that we can read and write. Adjust the directory name in each of these to match the device:
+
+```bash
+sudo chown ibuglab:ibuglab -R /home/ibuglab/bombuscam-XX/
+sudo chmod a+rwx /home/ibuglab/bombuscam-XX/
+sudo chmod -R 775 /home/ibuglab/bombuscam-XX/
+```
+
+## 7. DHT22 configuration 🌡️
 The DHT22 is a temperature/humidity sensor to record environmental conditions at the trap. To configure it, first ensure that the sensor is correctly installed on the GPIO pins of the Pi (see diagram below). 
 
 <div align="center">
 <img src="media/pi-dht.png" style="width: 400px; height: auto;">
 </div>
 
-Next, open a terminal and install the necessary dependencies and initialize a python virtual environment to run the `dht22.py` script. 
+Open a terminal and install the necessary dependencies and initialize a python virtual environment to run the `dht22.py` script. 
 
 ```bash
 sudo apt install -y \
@@ -119,25 +189,59 @@ python3-dev \
 build-essential \
 swig \
 liblgpio-dev
+```
 
-python3 -m venv /home/bombus/dht-env
-source /home/bombus/dht-env/bin/activate
+Next, we'll create a virtual environment to run the script, install the packages that talk to the sensor, and test that it's working:
 
+```bash
+# this creates a virtual environment to run the script:
+python3 -m venv /home/ibuglab/dht-env
+source /home/ibuglab/dht-env/bin/activate
+
+# this installs a few packages to talk to the sensor
 pip install lgpio
 pip install adafruit-blinka
 pip install adafruit-circuitpython-dht
-python home/bombus/bombuscam/dht22.py # this starts the script
+
+# this runs the script to test if the sensor is working
+python /home/ibuglab/bombuscam/dht22.py # this starts the script
 ```
 
-## 6. Setup CRONTAB events for all camera trap scripts 📅
+If the terminal is reading out temperatures and humidities that make sense, great -- it's working! You can exit the script by entering `cntl+c`. 
+
+## 8. Setup CRONTAB events for all camera trap scripts 📅
 Using the Witty Pi will start up and shutdown the Pi automatically to save on battery overnight. Because of this, we'll need to configure our Pi to automatically start our camera trap and temperature/humidity sensor script automatically each time the Pi boots up in the morning. For this, we'll use crontab, which is a job scheduler.
 
 ```
 crontab -e
 
 # add this line to start the scripts after reboot with a 60 second delay
-@reboot sleep 60 && /home/bombus/dht-env/venv/bin/python /home/bombus/bombuscam/dht22.py
-@reboot sleep 60 && /usr/bin/python3 /home/bombus/bombuscam/camera-trap.py
+@reboot sleep 60 && /home/ibuglab/dht-env/bin/python /home/ibuglab/bombuscam/dht22.py >> /home/ibuglab/bombuscam-xx/dht22.log 2>&1
+@reboot sleep 60 && /usr/bin/python3 /home/ibuglab/bombuscam/pollincam.py
 ```
 
-Save and exit the crontab. Our scripts are successfully scheduled to startup as soon as the Pi boots up in the morning (+ a 1 minute delay to ensure the device unit boots).  
+Save and exit the crontab. Our scripts are successfully scheduled to startup as soon as the Pi boots up in the morning (+ a 1 minute delay to ensure the device unit boots). 
+
+## 9. Add wifi hotspot as backup network in the field
+
+Open a terminal, and enter:
+
+```bash
+sudo nmcli connection add \
+  type wifi \
+  con-name "PhoneHotspot" \
+  ifname wlan0 \
+  ssid "YourHotspotSSID"
+```
+
+Replacing the "PhoneHotspot" with a name of your choice (e.g., "haidyn_hotspot") and replace the ssid line with your hotspot ssid (for iphone, this is the name of your iPhone: go to Settings -> General -> About to retrieve this.
+
+Next, add your password:
+
+```bash
+sudo nmcli connection modify "PhoneHotspot" \
+  wifi-sec.key-mgmt wpa-psk \
+  wifi-sec.psk "YourPassword"
+```
+
+Replacing "PhoneHotspot" with the name you entered above, and adjust the password to your hotspot password (this is visible/changeable in the Personal Hotspot settings on the iPhone.
